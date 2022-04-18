@@ -30,7 +30,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <SplitPane dividerPositions="0.3270358306188925" layoutY="26.0" pickOnBounds="false" prefHeight="477.0" prefWidth="684.0">
+      <SplitPane dividerPositions="0.3270358306188925" layoutY="26.0" prefHeight="477.0" prefWidth="684.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
@@ -44,7 +44,7 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <SplitPane dividerPositions="0.8714430894308944" mouseTransparent="true" orientation="VERTICAL" prefHeight="477.0" prefWidth="456.0">
+                  <SplitPane dividerPositions="0.8714430894308944" orientation="VERTICAL" prefHeight="477.0" prefWidth="456.0">
                     <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="376.0" prefWidth="454.0">
                            <children>

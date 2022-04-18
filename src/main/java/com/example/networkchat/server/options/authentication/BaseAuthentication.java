@@ -7,7 +7,8 @@ import java.util.List;
 public class BaseAuthentication implements AuthenticationService {
     private static final List<User> clients = List.of(
             new User("Ivanov", "ivan", "1111"),
-            new User("Bruce_Wane", "batman", "2222")
+            new User("Bruce_Wane", "batman", "2222"),
+            new User("Peter", "spider", "3333")
     );
 
     @Override
