@@ -51,18 +51,27 @@ public class MyServer {
         return authenticationService;
     }
 
-    public void subscribe(ClientHandler clientHandler) {
+    public synchronized void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
     }
 
-    public void unsubscribe(ClientHandler clientHandler) {
+    public synchronized void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
     }
 
-    public boolean isUsernameBusy(String username) {
+    public synchronized boolean isUsernameBusy(String username) {
         for (ClientHandler client : clients) {
             if (client.getUsername().equals(username)) return true;
         }
         return false;
+    }
+
+    public synchronized void broadcastMessage(String message, ClientHandler sender) throws IOException {
+        for (ClientHandler client : clients) {
+            if (client == sender) {
+                continue;
+            }
+            client.sendMessage(sender.getUsername(), message);
+        }
     }
 }
