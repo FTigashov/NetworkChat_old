@@ -16,6 +16,7 @@ public class StartClient extends Application {
     private Network network;
     private Stage primaryStage;
     private Stage authStage;
+    private ChatController chatController;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -26,21 +27,6 @@ public class StartClient extends Application {
 
         openAuthDialog();
         createChatDialog();
-
-        /*FXMLLoader fxmlLoader = new FXMLLoader(StartClient.class.getResource("chat-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Чат");
-        stage.setResizable(false);
-        stage.setScene(scene);
-        stage.show();
-
-        ChatController chatController = fxmlLoader.getController();
-        Network network = new Network();
-
-        chatController.setNetwork(network);
-
-        network.connect();
-        network.waitMessage(chatController);*/
     }
 
     private void openAuthDialog() throws IOException {
@@ -68,11 +54,18 @@ public class StartClient extends Application {
         primaryStage.setScene(scene);
 //        stage.show();
 
-        ChatController chatController = fxmlLoader.getController();
+        chatController = fxmlLoader.getController();
         chatController.setNetwork(network);
     }
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public void openChatDialog(String login) {
+        authStage.close();
+        chatController.setUserName(network.getUsername());
+        primaryStage.show();
+        network.waitMessage(chatController);
     }
 }

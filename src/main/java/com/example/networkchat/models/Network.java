@@ -10,11 +10,15 @@ import java.net.Socket;
 public class Network {
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 8186;
+
+    private static final String AUTH_CMD_PREFIX = "/auth"; // + login + password
+    private static final String AUTHOK_CMD_PREFIX = "/authok"; // + username
     private DataInputStream in;
     private DataOutputStream out;
 
     private final String host;
     private final int port;
+    private String username;
 
     public Network(String host, int port) {
         this.host = host;
@@ -69,5 +73,25 @@ public class Network {
         t.setDaemon(true);
         t.start();
 
+    }
+
+    public String sendAuthMessage(String login, String password) {
+        try {
+            out.writeUTF(String.format("%s %s %s", AUTH_CMD_PREFIX, login, password));
+            String response = in.readUTF();
+            if (response.startsWith(AUTHOK_CMD_PREFIX)) {
+                this.username = response.split("\\s+", 2)[1];
+                return null;
+            } else {
+                return response.split("\\s+", 2)[1];
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

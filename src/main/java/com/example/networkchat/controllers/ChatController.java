@@ -55,4 +55,8 @@ public class ChatController {
         chatHistory.appendText(message);
         chatHistory.appendText(System.lineSeparator());
     }
+
+    public void setUserName(String username) {
+        userName.setText(username);
+    }
 }
