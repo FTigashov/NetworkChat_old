@@ -1,6 +1,7 @@
 module com.example.networkchat {
     requires javafx.controls;
     requires javafx.fxml;
+    requires lombok;
 
 
     opens com.example.networkchat to javafx.fxml;
