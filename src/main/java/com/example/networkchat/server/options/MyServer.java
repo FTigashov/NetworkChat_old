@@ -1,5 +1,6 @@
 package com.example.networkchat.server.options;
 
+import com.example.networkchat.controllers.ChatController;
 import com.example.networkchat.server.options.authentication.AuthenticationService;
 import com.example.networkchat.server.options.authentication.BaseAuthentication;
 import com.example.networkchat.server.options.handler.ClientHandler;

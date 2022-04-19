@@ -28,16 +28,16 @@ public class AuthController {
         String password = passwordField.getText().trim();
 
         if (login.length() == 0 || password.length() == 0) {
-            System.out.println("Необходимо ввести логин и пароль!");
+            startClient.showErrorAlert("Ошибка ввода", "Все поля должны быть заполнены");
             return;
         }
 
         String authErrorMessage = network.sendAuthMessage(login, password);
 
         if (authErrorMessage == null) {
-            startClient.openChatDialog(login);
+            startClient.openChatDialog();
         } else {
-            System.out.println("Ошибка авторизации!" + authErrorMessage);
+            startClient.showErrorAlert("Ошибка аутентификации", authErrorMessage);
         }
     }
 

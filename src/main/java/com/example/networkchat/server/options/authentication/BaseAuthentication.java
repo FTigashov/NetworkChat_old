@@ -6,9 +6,9 @@ import java.util.List;
 
 public class BaseAuthentication implements AuthenticationService {
     private static final List<User> clients = List.of(
-            new User("Ivanov", "ivan", "1111"),
-            new User("Bruce_Wane", "batman", "2222"),
-            new User("Peter", "spider", "3333")
+            new User("Андрей", "user1", "1111"),
+            new User("Тимофей", "user2", "2222"),
+            new User("Игорь", "user3", "3333")
     );
 
     @Override

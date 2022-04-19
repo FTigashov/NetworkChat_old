@@ -82,11 +82,11 @@ public class ClientHandler {
             out.writeUTF(AUTHOK_CMD_PREFIX + " " + username);
             myServer.subscribe(this);
             System.out.println("Пользователь " + username + " подключился к чату");
-            myServer.broadcastMessage(String.format(">>> %s присоединился к чату", username), this, true);
+            myServer.broadcastMessage(String.format("%s присоединился к чату", username), this, true);
 
             return true;
         } else {
-            out.writeUTF(AUTHERR_CMD_PREFIX + " Логин или пароль не соответствуют действительности");
+            out.writeUTF(AUTHERR_CMD_PREFIX + " логин или пароль не соответствуют действительности");
             return false;
         }
     }
@@ -108,7 +108,6 @@ public class ClientHandler {
             } else {
                 myServer.broadcastMessage(message, this);
             }
-
         }
     }
 

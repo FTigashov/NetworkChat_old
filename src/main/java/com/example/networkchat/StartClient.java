@@ -6,6 +6,7 @@ import com.example.networkchat.models.Network;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -52,7 +53,6 @@ public class StartClient extends Application {
         primaryStage.setTitle("Чат");
         primaryStage.setResizable(false);
         primaryStage.setScene(scene);
-//        stage.show();
 
         chatController = fxmlLoader.getController();
         chatController.setNetwork(network);
@@ -62,10 +62,17 @@ public class StartClient extends Application {
         launch();
     }
 
-    public void openChatDialog(String login) {
+    public void openChatDialog() {
         authStage.close();
         chatController.setUserName(network.getUsername());
         primaryStage.show();
         network.waitMessage(chatController);
+    }
+
+    public void showErrorAlert(String title, String errorMessage) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(errorMessage);
+        alert.show();
     }
 }

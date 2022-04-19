@@ -1,6 +1,7 @@
 package com.example.networkchat.models;
 
 import com.example.networkchat.controllers.ChatController;
+import javafx.application.Platform;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,6 +14,13 @@ public class Network {
 
     private static final String AUTH_CMD_PREFIX = "/auth"; // + login + password
     private static final String AUTHOK_CMD_PREFIX = "/authok"; // + username
+    private static final String AUTHERR_CMD_PREFIX = "/autherr"; // + error message
+    private static final String CLIENT_MSG_CMD_PREFIX = "/cm"; // + msg
+    private static final String SERVER_MSG_CMD_PREFIX = "/sm"; // + msg
+    private static final String PRIVATE_MSG_CMD_PREFIX = "/pm"; // + login + msg
+    private static final String STOP_SERVER_CMD_PREFIX = "/stop";
+    private static final String END_CLIENT_CMD_PREFIX = "/end";
+
     private DataInputStream in;
     private DataOutputStream out;
 
@@ -48,22 +56,25 @@ public class Network {
         return out;
     }
 
-    public void sendMessage(String message) {
-        try {
-            out.writeUTF(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при отправке сообщения");
-        }
-    }
-
     public void waitMessage(ChatController chatController) {
         Thread t = new Thread(() -> {
             try {
                 while (true) {
-
                     String message = in.readUTF();
-                    chatController.appendMessage("Я: " + message);
+                    if (message.startsWith(CLIENT_MSG_CMD_PREFIX)) {
+                        String[] parts = message.split("\\s+", 3);
+                        String sender = parts[1];
+                        String messageFromSender = parts[2];
+
+                        Platform.runLater(() -> chatController.appendMessage(String.format("%s: %s", sender, messageFromSender)));
+                    } else if (message.startsWith(SERVER_MSG_CMD_PREFIX)) {
+                        String[] parts = message.split("\\s+", 2);
+                        String serverMessage = parts[1];
+
+                        Platform.runLater(() -> chatController.appendServerMessage(serverMessage));
+                    } else {
+                        Platform.runLater(() -> System.out.println("Неизвестная ошибка сервера!"));
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -89,6 +100,19 @@ public class Network {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void sendMessage(String message) {
+        try {
+            out.writeUTF(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Ошибка при отправке сообщения");
+        }
+    }
+
+    public void sendPrivateMessage(String selectedRecipient, String message) {
+        sendMessage(String.format("%s %s %s", PRIVATE_MSG_CMD_PREFIX, selectedRecipient, message));
     }
 
     public String getUsername() {
