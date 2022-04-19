@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 public class ClientHandler {
     private static final String AUTH_CMD_PREFIX = "/auth"; // + login + password
@@ -17,6 +18,7 @@ public class ClientHandler {
     private static final String PRIVATE_MSG_CMD_PREFIX = "/pm"; // + login + msg
     private static final String STOP_SERVER_CMD_PREFIX = "/stop";
     private static final String END_CLIENT_CMD_PREFIX = "/end";
+    private static final String LIST_OF_CLIENTS = "/list";
 
     private MyServer myServer;
     private Socket clientSocket;
@@ -41,6 +43,11 @@ public class ClientHandler {
             } catch (IOException e) {
                 e.printStackTrace();
                 myServer.unsubscribe(this);
+                try {
+                    myServer.broadcastClientDisconnected(this);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }).start();
     }
@@ -82,7 +89,7 @@ public class ClientHandler {
             out.writeUTF(AUTHOK_CMD_PREFIX + " " + username);
             myServer.subscribe(this);
             System.out.println("Пользователь " + username + " подключился к чату");
-            myServer.broadcastMessage(String.format("%s присоединился к чату", username), this, true);
+            myServer.broadcastListOfClients(this);
 
             return true;
         } else {
@@ -103,7 +110,6 @@ public class ClientHandler {
                 String[] parts = message.split("\\s+", 3);
                 String recipient = parts[1];
                 String privateMessage = parts[2];
-
                 myServer.sendPrivateMessage(this, recipient, privateMessage);
             } else {
                 myServer.broadcastMessage(message, this);
@@ -120,6 +126,19 @@ public class ClientHandler {
     }
 
     public String getUsername() {
+        return username;
+    }
+
+    public void sendListOfClients(List<ClientHandler> clients) throws IOException {
+        out.writeUTF(String.format("%s %s", LIST_OF_CLIENTS, clients.toString()));
+    }
+
+    public void sendServerMessage(String message) throws IOException {
+        out.writeUTF(String.format("%s %s", SERVER_MSG_CMD_PREFIX, message));
+    }
+
+    @Override
+    public String toString() {
         return username;
     }
 }

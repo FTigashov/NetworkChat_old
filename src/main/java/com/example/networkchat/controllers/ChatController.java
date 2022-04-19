@@ -1,14 +1,14 @@
 package com.example.networkchat.controllers;
 
 import com.example.networkchat.models.Network;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 public class ChatController {
@@ -30,8 +30,8 @@ public class ChatController {
 
     @FXML
     public void initialize() {
-        userList.setItems(FXCollections.observableArrayList("Тимофей", "Андрей", "Игорь"));
-        userList.getItems().add("Test");
+//        userList.setItems(FXCollections.observableArrayList("Тимофей", "Андрей", "Игорь"));
+//        userList.getItems().add("Test");
         sendButton.setOnAction(event -> sendMessage());
         inputField.setOnAction(event -> sendMessage());
 
@@ -94,12 +94,14 @@ public class ChatController {
         chatHistory.appendText(System.lineSeparator());
     }
 
-    public void appendUser(String username) {
-        userList.getItems().add(username);
-    }
 
-    public void removeUser(String username) {
-        userList.getItems().remove(username);
+    public void updateListOfClients(String[] users) {
+        Arrays.sort(users);
+        for (String client : users) {
+            if (client.equals(network.getUsername())) client = "Я";
+        }
+        userList.getItems().clear();
+        Collections.addAll(userList.getItems(), users);
     }
 
     public void setUserName(String username) {

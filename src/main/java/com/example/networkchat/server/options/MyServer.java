@@ -1,6 +1,5 @@
 package com.example.networkchat.server.options;
 
-import com.example.networkchat.controllers.ChatController;
 import com.example.networkchat.server.options.authentication.AuthenticationService;
 import com.example.networkchat.server.options.authentication.BaseAuthentication;
 import com.example.networkchat.server.options.handler.ClientHandler;
@@ -80,11 +79,32 @@ public class MyServer {
         broadcastMessage(message, sender, false);
     }
 
+    public synchronized void broadcastListOfClients(ClientHandler clientHandler) throws IOException {
+        for (ClientHandler client : clients) {
+            client.sendServerMessage(String.format("%s вошел в чат", clientHandler.getUsername()));
+            client.sendListOfClients(clients);
+        }
+    }
+
     public synchronized void sendPrivateMessage(ClientHandler sender, String recipient, String privateMessage) throws IOException {
         for (ClientHandler client : clients) {
             if (client.getUsername().equals(recipient)) {
                 client.sendMessage(sender.getUsername(), privateMessage);
             }
+        }
+    }
+
+    /*public synchronized List<ClientHandler> getListOfClients() {
+        return clients;
+    }*/
+
+    public synchronized void broadcastClientDisconnected(ClientHandler clientHandler) throws IOException {
+        for (ClientHandler client : clients) {
+            if (client == clientHandler) {
+                continue;
+            }
+            client.sendServerMessage(String.format("%s вышел из чата", clientHandler.getUsername()));
+            client.sendListOfClients(clients);
         }
     }
 }

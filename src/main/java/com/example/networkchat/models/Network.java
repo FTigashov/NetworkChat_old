@@ -20,6 +20,7 @@ public class Network {
     private static final String PRIVATE_MSG_CMD_PREFIX = "/pm"; // + login + msg
     private static final String STOP_SERVER_CMD_PREFIX = "/stop";
     private static final String END_CLIENT_CMD_PREFIX = "/end";
+    private static final String LIST_OF_CLIENTS = "/list";
 
     private DataInputStream in;
     private DataOutputStream out;
@@ -72,6 +73,11 @@ public class Network {
                         String serverMessage = parts[1];
 
                         Platform.runLater(() -> chatController.appendServerMessage(serverMessage));
+                    } else if (message.startsWith(LIST_OF_CLIENTS)) {
+                        message = message.substring(message.indexOf('[') + 1, message.indexOf(']'));
+                        String[] users = message.split(", ");
+
+                        Platform.runLater(() -> chatController.updateListOfClients(users));
                     } else {
                         Platform.runLater(() -> System.out.println("Неизвестная ошибка сервера!"));
                     }
