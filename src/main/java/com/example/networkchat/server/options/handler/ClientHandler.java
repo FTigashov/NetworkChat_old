@@ -2,11 +2,13 @@ package com.example.networkchat.server.options.handler;
 
 import com.example.networkchat.server.options.MyServer;
 import com.example.networkchat.server.options.authentication.AuthenticationService;
+import com.example.networkchat.server.options.authentication.DBAuthentication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ClientHandler {
@@ -25,6 +27,7 @@ public class ClientHandler {
     private DataOutputStream out;
     private DataInputStream in;
     private String username;
+    private AuthenticationService authenticationService = new DBAuthentication();
 
     public ClientHandler(MyServer myServer, Socket socket) {
 
@@ -40,7 +43,7 @@ public class ClientHandler {
             try {
                 authentication();
                 readMessage();
-            } catch (IOException e) {
+            } catch (IOException | SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
                 myServer.unsubscribe(this);
                 try {
@@ -52,7 +55,7 @@ public class ClientHandler {
         }).start();
     }
 
-    private void authentication() throws IOException {
+    private void authentication() throws IOException, SQLException, ClassNotFoundException {
         while (true) {
             String message = in.readUTF();
             if (message.startsWith(AUTH_CMD_PREFIX)) {
@@ -68,7 +71,7 @@ public class ClientHandler {
         }
     }
 
-    private boolean processAuthentication(String message) throws IOException {
+    private boolean processAuthentication(String message) throws IOException, SQLException, ClassNotFoundException {
         String[] parts = message.split("\\s+");
         if (parts.length != 3) {
             out.writeUTF(AUTHERR_CMD_PREFIX + " Ошибка аутентификации");
@@ -77,6 +80,7 @@ public class ClientHandler {
         String password = parts[2];
 
         AuthenticationService auth = myServer.getAuthenticationService();
+        auth.startAuthentication();
 
         username = auth.getUsernameByLoginAndPassword(login, password);
 
@@ -85,15 +89,15 @@ public class ClientHandler {
                 out.writeUTF(AUTHERR_CMD_PREFIX + " Логин уже используется");
                 return false;
             }
-
             out.writeUTF(AUTHOK_CMD_PREFIX + " " + username);
             myServer.subscribe(this);
             System.out.println("Пользователь " + username + " подключился к чату");
             myServer.broadcastListOfClients(this);
-
+            auth.endAuthentication();
             return true;
         } else {
             out.writeUTF(AUTHERR_CMD_PREFIX + " логин или пароль не соответствуют действительности");
+            auth.endAuthentication();
             return false;
         }
     }

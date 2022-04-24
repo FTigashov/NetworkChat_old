@@ -1,12 +1,13 @@
 package com.example.networkchat.server.options;
 
 import com.example.networkchat.server.options.authentication.AuthenticationService;
-import com.example.networkchat.server.options.authentication.BaseAuthentication;
+import com.example.networkchat.server.options.authentication.DBAuthentication;
 import com.example.networkchat.server.options.handler.ClientHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +17,9 @@ public class MyServer {
     private final AuthenticationService authenticationService;
     private final List<ClientHandler> clients;
 
-    public MyServer(int port) throws IOException {
+    public MyServer(int port) throws IOException, SQLException, ClassNotFoundException {
         serverSocket = new ServerSocket(port);
-        authenticationService = new BaseAuthentication();
+        authenticationService = new DBAuthentication();
         clients = new ArrayList<>();
     }
 
