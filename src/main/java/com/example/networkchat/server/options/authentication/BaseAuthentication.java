@@ -1,6 +1,7 @@
 package com.example.networkchat.server.options.authentication;
 
 import com.example.networkchat.server.options.models.User;
+import org.sqlite.jdbc4.JDBC4Connection;
 
 import java.util.List;
 
